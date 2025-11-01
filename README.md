@@ -1,124 +1,242 @@
-# Toy MCP Example
+# MCP Framework - Model Context Protocol
 
-This is a simple, educational example of the **Model Context Protocol (MCP)**. MCP is a protocol that allows AI models to interact with external tools and resources.
+A simple, educational framework for creating MCP (Model Context Protocol) tools. This framework allows AI models to interact with external tools and resources through a clean, extensible interface.
 
 ## What is MCP?
 
 **Model Context Protocol (MCP)** enables AI models to:
-- **Call tools**: Execute functions to perform actions (like calculations, API calls, etc.)
+- **Call tools**: Execute functions to perform actions (calculations, API calls, etc.)
 - **Access resources**: Retrieve data or information when needed
 - **Maintain context**: Remember information across interactions
 
-Think of it like giving an AI assistant the ability to:
+Think of it as giving an AI assistant the ability to:
 - Use a calculator (tool)
 - Check the weather (tool)
 - Remember your name (context/memory)
+- Access geospatial data (STAC API tool)
 
-## Files in this Example
+## Project Structure
 
-1. **`mcp_server.py`**: The MCP server that provides tools
-   - Defines tools (calculator, memory, weather)
-   - Handles tool execution
-   - Manages context/session data
-
-2. **`mcp_client.py`**: A client that simulates how an AI would use the server
-   - Interprets user requests
-   - Calls appropriate tools
-   - Returns results to the user
-
-## How to Run
-
-### Run the Server Example
-
-```bash
-python mcp_server.py
+```
+├── mcp_framework.py       # Core framework (MCPServer class)
+├── tools/                  # Tool modules
+│   ├── __init__.py        # Tool exports
+│   ├── basic_tools.py      # Example tools (calculator, memory, weather)
+│   └── stac_tools.py      # STAC API tools (geospatial data)
+├── examples.py            # Comprehensive examples
+├── requirements.txt       # Python dependencies
+└── README.md              # This file
 ```
 
-This will demonstrate:
-- Tool registration
-- Tool execution
-- Context management
-- Error handling
+## Quick Start
 
-### Run the Client Example
+### 1. Install Dependencies
 
 ```bash
-python mcp_client.py
+pip install -r requirements.txt
 ```
 
-This simulates a conversation where:
-- User asks questions
-- AI decides which tools to use
-- Tools execute and return results
-- AI responds to the user
+### 2. Run Examples
 
-## Key Concepts Explained
+```bash
+python examples.py
+```
+
+This demonstrates:
+- Basic tools (calculator, memory, weather)
+- STAC API tools (geospatial data access)
+- Creating custom tools
+
+## Framework Usage
+
+### Basic Usage
+
+```python
+from mcp_framework import MCPServer
+from tools import calculator_tool, memory_tool
+
+# Create server
+server = MCPServer()
+
+# Register tools
+server.register_tool("calculator", calculator_tool)
+server.register_tool("memory", memory_tool)
+
+# Use tools
+result = server.call_tool("calculator", {
+    "operation": "add",
+    "a": 10,
+    "b": 5
+})
+print(result["result"])  # "10 add 5 = 15"
+```
+
+### Creating Your Own Tool
+
+```python
+from mcp_framework import MCPServer
+from typing import Dict, Any
+
+def my_tool(args: Dict[str, Any], context: Dict[str, Any]) -> str:
+    """My custom tool."""
+    name = args.get("name", "World")
+    return f"Hello, {name}!"
+
+# Register and use
+server = MCPServer()
+server.register_tool("greeting", my_tool)
+result = server.call_tool("greeting", {"name": "Student"})
+```
+
+## Example Tools Included
+
+### Basic Tools (`tools/basic_tools.py`)
+
+1. **`calculator_tool`**: Simple arithmetic operations
+   - Operations: add, subtract, multiply, divide
+   - Args: `operation`, `a`, `b`
+
+2. **`memory_tool`**: Store and retrieve data (context persistence example)
+   - Actions: store, retrieve
+   - Args: `action`, `key`, `value` (for store)
+
+3. **`weather_tool`**: Mock weather data (API simulation example)
+   - Args: `city`
+
+### STAC API Tools (`tools/stac_tools.py`)
+
+4. **`stac_list_collections_tool`**: List available geospatial datasets
+
+5. **`stac_search_tool`**: Search for geospatial data
+   - Args: `collection`, `bbox`, `date_start`, `date_end`, `limit`
+   - Example: `{"collection": "io-lulc-annual-v02", "bbox": [116.2, 39.8, 116.5, 40.0]}`
+
+6. **`stac_download_tool`**: Download geospatial data files
+   - Args: `item_index`, `asset_type`, `output_dir`
+
+7. **`stac_visualize_tool`**: Create interactive maps
+   - Args: `item_index`, `zoom`, `output_file`, `image_path` (optional)
+
+## STAC API Example
+
+```python
+from mcp_framework import MCPServer
+from tools import (
+    stac_search_tool,
+    stac_download_tool,
+    stac_visualize_tool
+)
+
+server = MCPServer()
+server.register_tool("stac_search", stac_search_tool)
+server.register_tool("stac_download", stac_download_tool)
+server.register_tool("stac_visualize", stac_visualize_tool)
+
+# Search for Land Use/Land Cover data
+result = server.call_tool("stac_search", {
+    "collection": "io-lulc-annual-v02",
+    "bbox": [116.2, 39.8, 116.5, 40.0],  # Beijing
+    "date_start": "2023-01-01",
+    "date_end": "2023-12-31"
+})
+
+# Download the data
+result = server.call_tool("stac_download", {
+    "item_index": 0,
+    "asset_type": "data"
+})
+
+# Visualize on map
+result = server.call_tool("stac_visualize", {
+    "item_index": 0,
+    "output_file": "map.html"
+})
+```
+
+## Popular STAC Collections
+
+- **`io-lulc-annual-v02`**: 10m Annual Land Use/Land Cover (9 classes)
+- **`sentinel-2-l2a`**: Sentinel-2 satellite imagery (10m resolution)
+- **`landsat-c2-l2`**: Landsat satellite imagery (30m resolution)
+- **`modis-09a1`**: MODIS surface reflectance data
+- **`naip`**: National Agriculture Imagery Program
+
+### Understanding Bounding Boxes
+
+Bounding boxes use: `[min_longitude, min_latitude, max_longitude, max_latitude]`
+
+Example (Beijing):
+- Longitude: 116.2°E to 116.5°E
+- Latitude: 39.8°N to 40.0°N
+- Bbox: `[116.2, 39.8, 116.5, 40.0]`
+
+## Key Concepts
 
 ### 1. Tools
-Tools are functions that the AI can call. Each tool:
-- Takes arguments (input)
-- Performs an action
-- Returns a result (output)
-
-**Example**: The `calculator` tool takes two numbers and an operation, then returns the result.
+Tools are functions with signature: `func(args: Dict[str, Any], context: Dict[str, Any]) -> str`
 
 ### 2. Server
-The MCP server:
-- Registers available tools
-- Executes tools when requested
-- Maintains context (like session memory)
+The MCPServer class:
+- Registers tools
+- Executes tools
+- Maintains context across calls
 
-### 3. Client (AI Model)
-The client (AI model):
-- Receives user requests
-- Decides which tools to use
-- Calls tools via the server
-- Returns results to the user
-
-### 4. Context
-Context is information stored by the server that persists across tool calls. For example:
-- User preferences
-- Session data
-- Previous conversation history
-
-## Example Flow
-
-```
-1. User: "What is 10 + 5?"
-   ↓
-2. AI (Client): Recognizes this needs calculation
-   ↓
-3. AI calls: calculator_tool({"operation": "add", "a": 10, "b": 5})
-   ↓
-4. Server: Executes the tool
-   ↓
-5. Server returns: {"result": "10 add 5 = 15"}
-   ↓
-6. AI: "The answer is 15"
+### 3. Context
+Shared data that persists across tool calls:
+```python
+server.set_context("key", "value")
+value = server.get_context("key")
 ```
 
-## Real-World Applications
+## Extending the Framework
 
-In real MCP implementations:
-- **Server**: Could be a web server, database, or any external system
-- **Client**: An AI assistant (like Claude, ChatGPT, etc.)
-- **Tools**: Real APIs, databases, file systems, etc.
+### Adding New Tools
 
-## Why MCP Matters
+1. Create a new file in `tools/` directory (e.g., `tools/my_tools.py`)
+2. Define your tool functions following the signature pattern
+3. Export them in `tools/__init__.py`
+4. Import and register in your code
 
-MCP allows AI models to:
-- Go beyond their training data
-- Access real-time information
-- Perform actions in the real world
-- Remember context across conversations
+Example:
+```python
+# tools/my_tools.py
+def my_tool(args: Dict[str, Any], context: Dict[str, Any]) -> str:
+    param = args.get("param", "default")
+    return f"Result: {param}"
+```
+
+## Requirements
+
+Core dependencies:
+- Python 3.7+
+
+For STAC tools:
+- `requests` - HTTP requests
+- `planetary-computer` - URL signing for Microsoft Planetary Computer
+- `rasterio` - Geospatial raster I/O
+- `folium` - Interactive maps
+- `numpy` - Numerical operations
+
+## Authentication
+
+Microsoft Planetary Computer requires URL signing to access data files. The `planetary-computer` package handles this automatically - no account needed for basic usage.
+
+## Learning Path
+
+1. **Start Simple**: Run `examples.py` to see basic tools in action
+2. **Study Examples**: Read `tools/basic_tools.py` to understand tool structure
+3. **Explore STAC**: Try the STAC tools with different collections
+4. **Create Your Own**: Add new tools to the `tools/` directory
+5. **Extend Framework**: Modify `mcp_framework.py` if needed
 
 ## Next Steps
 
-To understand MCP better:
-1. Read through `mcp_server.py` to see how tools are defined
-2. Run `mcp_client.py` to see the interaction flow
-3. Try modifying the tools to add your own functionality
-4. Experiment with adding more complex tools (e.g., database queries, API calls)
+- Read through `mcp_framework.py` to understand the core framework
+- Study `tools/basic_tools.py` for simple tool examples
+- Examine `tools/stac_tools.py` for API integration examples
+- Create your own tools following the patterns
+- Experiment with different STAC collections and regions
 
+## License
 
-
+Educational use - designed for learning and teaching MCP concepts.
