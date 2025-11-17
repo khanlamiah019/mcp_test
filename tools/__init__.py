@@ -1,8 +1,11 @@
 """
 MCP Tools Package
 
-This package contains example MCP tools organized by category.
-Students can add their own tools here or create new modules.
+This package contains shared framework tools.
+Students should create their own tools in their personal directories (e.g., team1a/scarlett/).
+
+Note: STAC tools have been moved to team1a/scarlett/stac_tools.py as an example
+of student-developed tools. Import them directly from that location.
 """
 
 from .basic_tools import (
@@ -11,22 +14,10 @@ from .basic_tools import (
     weather_tool
 )
 
-from .stac_tools import (
-    stac_list_collections_tool,
-    stac_search_tool,
-    stac_download_tool,
-    stac_visualize_tool
-)
-
 __all__ = [
     # Basic tools
     'calculator_tool',
     'memory_tool',
     'weather_tool',
-    # STAC tools
-    'stac_list_collections_tool',
-    'stac_search_tool',
-    'stac_download_tool',
-    'stac_visualize_tool',
 ]
 
