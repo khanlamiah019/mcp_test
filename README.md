@@ -155,11 +155,10 @@ Strong ESG performance provides SMBs with:
 3. **Data Accessibility Patterns**: Approximately 70% of relevant collections are publicly accessible without authentication, enabling broad SMB adoption.
 
 **Visualizations:**
-
-![STAC API Browser Interface](visualizations/stac_browser_screenshot.png)
+<img width="670" height="306" alt="Screenshot 2025-11-30 at 3 56 58 PM" src="https://github.com/user-attachments/assets/24bad1ea-7602-4b54-a14d-64dc20ffc200" />
 *Figure 1: STAC API Browser showing collections from multiple providers. Users can explore collections, view metadata, and check accessibility status. The interface provides a unified view of geospatial data across AWS, Google Earth, NASA, and Microsoft catalogs.*
 
-![Switzerland Flood Hazard Map](visualizations/flood_hazard_switzerland.png)
+<img width="1347" height="688" alt="Screenshot 2025-11-30 at 3 56 27 PM" src="https://github.com/user-attachments/assets/31bfab7b-dc1a-47ca-936f-1ec24d7075f1" />
 *Figure 2: Interactive flood hazard visualization for Switzerland showing overland flow risk areas. Red zones indicate high-risk areas. Users can click anywhere within risk zones to retrieve detailed collection metadata, including dates, geographic coverage, and ESG application recommendations such as deforestation tracking, climate risk analysis, and supply chain sustainability.*
 
 ---
@@ -287,10 +286,11 @@ Successfully mapped geospatial collections to SASB metrics across key categories
 
 ### Visualizations
 
-![ESG Metric Mapping Example](visualizations/sasb_mapping_table.png)
+<img width="677" height="274" alt="Screenshot 2025-11-30 at 3 57 37 PM" src="https://github.com/user-attachments/assets/2a5c83fe-0f32-4d6b-b48c-25e4d5c4a0dc" />
 *Table 1: Sample SASB mapping for Software & IT Services sector showing how geospatial datasets connect to specific disclosure metrics. Includes sector, topic, metric description, category (quantitative/qualitative), unit of measure, and SASB code.*
 
-![Global Power Plants Visualization](visualizations/energy_infrastructure_map.png)
+<img width="687" height="363" alt="Screenshot 2025-11-30 at 3 57 52 PM" src="https://github.com/user-attachments/assets/7f473a63-94ff-4b5b-8023-a89fba970322" />
+
 *Figure 3: Interactive map of global energy infrastructure colored by fuel type and sized by capacity. Enables SMBs to assess proximity to fossil fuel vs. renewable energy sources for supply chain and location decisions.*
 
 ---
